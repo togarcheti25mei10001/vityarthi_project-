@@ -1,171 +1,127 @@
-# vityarthi_project-
-project on collge student budget advisor
-📘 College Student Budget Advisor
-
-1. Project Title
-
-College Student Budget Advisor
-
-2. Problem Definition
-
-College students often struggle to manage their monthly expenses due to limited income, unpredictable spending habits, and lack of financial planning. This leads to overspending, debt, and difficulty saving money.
-The goal of this project is to build a simple digital advisor that helps students track their income, monitor expenses, set budgets, and receive alerts or suggestions to improve financial discipline.
-
-3. Objectives
-
-Help students track monthly income and categorize expenses.
-
-Provide a clear overview of spending patterns.
-
-Enable users to set monthly budgets for each category.
-
-Notify when spending exceeds the budget limit.
-
-Improve financial awareness and planning habits among students.
-
-4. Expected Outcomes
-
-A working budget advisor tool with simple and intuitive usage.
-
-Monthly summary of expenses, savings, and overspending.
-
-Graphs or tables showing spending patterns (optional).
-
-Better financial planning for college students.
-
-5. Requirement Analysis
-
-Functional Requirements
-
-Add income and expense entries.
-
-Categorize expenses (food, travel, hostel, books, entertainment, etc.).
-
-Set monthly budget limits.
-
-Generate summary (remaining balance, total expenses, savings).
-
-Store data in files (JSON/CSV).
-
-
-Non-Functional Requirements
-
-Usability: Easy for students to use daily.
-
-Performance: Fast calculations and quick access to data.
-
-Maintainability: Easy to update categories or logic.
-
-Portability: Should run on any system that supports Python.
-
-
-6. System Design (Top-Down Method)
-
-Top-Down Breakdown
-
-Budget Advisor System
-│
-├── Data Input Module
-│       ├── Add Income
-│       ├── Add Expense
-│
-├── Budget Management Module
-│       ├── Set Monthly Budget
-│       ├── Track Category Limits
-│
-├── Analysis Module
-│       ├── Calculate total expenses
-│       ├── Compare budget vs expenses
-│       ├── Generate summary
-│
-└── Storage Module
-        ├── Save data to file
-        ├── Load previous records
-
-
-7. Algorithm
-
-Basic Budget Calculation Algorithm
-
-1. Start
-
-
-2. Input total monthly income
-
-
-3. Input expenses (amount + category)
-
-
-4. Add each new expense to the category total
-
-
-5. Compare category spending with category budget
-
-
-6. If spending > budget → show alert
-
-
-7. At end of month:
-
-Total expenses = sum of all categories
-
-Savings = Income − Total expenses
-
-
-
-8. Display summary report
-
-
-9. End
-
-
-8. Implementation Details
-
-Programming Language
-
-Python
-
-
-Libraries Used
-
-json for data storage
-
-csv (optional)
-
-matplotlib (optional for graphs)
-
-
-Project Structure
-
-college-budget-advisor/
-│
-├── README.md
-├── report.pdf
-├── src/
-│    ├── main.py
-│    ├── budget_manager.py
-│    ├── storage.py
-│
-├── screenshots/
-└── recordings/
-
-9. How to Run the Project
-
-git clone <your-repository-link>
-cd college-budget-advisor
-python src/main.py
-
-10. Screenshots
-
-Screenshots of the project output and execution are available in the /screenshots folder.
-
-11. Recordings
-
-Any demo videos are located in the /recordings folder.
-
-
----
-
-12. Conclusion
-
-The College Student Budget Advisor helps students efficiently manage their money by tracking income and expenses, enforcing budget limits, and providing clear summaries. This tool promotes financial discipline and helps students develop responsible spending habits.
+class BudgetAdvisor:
+    """
+    A class to manage and advise on a college student's monthly budget.
+    Implements three functional modules: Input/Data Processing, Budget Calculation, and Financial Reporting.
+    """
+
+    def __init__(self):
+        # FIX: Changed _init_ to __init__ (double underscores)
+        self.income = 0.0
+        self.expenses = {}
+        self.total_expenses = 0.0
+        self.leftover = 0.0
+        self.savings_goal = {"name": "", "amount": 0.0}
+
+    # === Functional Module 1: Data Input & Processing ===
+    def _collect_financial_data(self):
+        """Collects the user's monthly income and detailed expenses."""
+        print("\n--- 💰 Module 1: Data Input & Processing ---")
+        
+        while True:
+            try:
+                self.income = float(input("Enter your total monthly income (job, allowance, etc.): $"))
+                if self.income < 0:
+                    raise ValueError
+                break
+            except ValueError:
+                print("Invalid input. Please enter a positive number for income.")
+
+        print("\nEnter your monthly expenses:")
+        expense_categories = {
+            "Rent / Housing": "rent",
+            "Food / Groceries": "food",
+            "Transportation": "transportation",
+            "Utilities / Phone / Internet": "utilities",
+            "Entertainment / Eating Out": "entertainment",
+            "Other personal expenses": "others"
+        }
+        
+        for name, key in expense_categories.items():
+            while True:
+                try:
+                    amount = float(input(f"  {name}: $"))
+                    if amount < 0:
+                        raise ValueError
+                    self.expenses[key] = amount
+                    break
+                except ValueError:
+                    print("Invalid input. Please enter a positive number for the expense.")
+
+    # === Functional Module 2: Budget Calculation ===
+    def _calculate_budget(self):
+        """Calculates total expenses and the leftover balance."""
+        print("\n--- 🧮 Module 2: Budget Calculation ---")
+        
+        self.total_expenses = sum(self.expenses.values())
+        self.leftover = self.income - self.total_expenses
+
+    # === Functional Module 3: Financial Reporting & Savings Advice ===
+    def _generate_report_and_advice(self):
+        """Generates the budget summary, financial advice, and savings goal planner."""
+        print("\n--- 📊 Module 3: Financial Reporting & Advice ---")
+        
+        # Budget Summary
+        print("\n--- Monthly Budget Summary ---")
+        print(f"Total Income:     ${self.income:,.2f}")
+        print(f"Total Expenses:   ${self.total_expenses:,.2f}")
+        print(f"Money Left Over:  ${self.leftover:,.2f}")
+
+        # Financial Advice
+        print("\n--- Financial Advice ---")
+
+        if self.leftover > 0:
+            print("✅ Great! You are spending less than you earn.")
+
+            # Savings recommendation based on 50/30/20 rule
+            recommended_savings = self.income * 0.20
+            print(f"- Based on the 20% rule, you should aim to save: ${recommended_savings:,.2f} per month.")
+
+            if self.leftover < recommended_savings:
+                print("⚠ Warning: Your current leftover amount is less than the 20% savings target.")
+            else:
+                 print("Good job! You meet the 20% savings target.")
+
+        elif self.leftover == 0:
+            print("⚠ Caution: You are breaking even. Try lowering some non-essential expenses.")
+        else:
+            print("❌ Warning: You are spending MORE than you earn! (Deficit: ${:.2f})".format(abs(self.leftover)))
+            print("Action Needed: Try cutting down discretionary expenses or finding additional income.")
+            
+        self._plan_savings_goal()
+        
+    def _plan_savings_goal(self):
+        """Handles the savings goal planning feature."""
+        print("\n--- Savings Goal Planner ---")
+        self.savings_goal["name"] = input("Enter a savings goal (e.g., laptop, emergency fund): ")
+        
+        while True:
+            try:
+                self.savings_goal["amount"] = float(input("Goal amount ($): "))
+                if self.savings_goal["amount"] < 0:
+                    raise ValueError
+                break
+            except ValueError:
+                print("Invalid input. Please enter a positive goal amount.")
+
+        if self.leftover > 0:
+            # Calculation using LaTeX context for clarity in thought
+            # Time = Goal / MonthlySavings
+            months_needed = self.savings_goal["amount"] / self.leftover
+            print(f"At your current leftover amount (${self.leftover:,.2f}/mo), you can reach your '{self.savings_goal['name']}' goal in about *{months_needed:.1f} months*.")
+        else:
+            print("You currently cannot save toward your goal because you have no leftover funds.")
+
+    # === Main Execution Method ===
+    def run_advisor(self):
+        print("\n--- Welcome to the College Student Budget & Savings Advisor ---")
+        self._collect_financial_data()
+        self._calculate_budget()
+        self._generate_report_and_advice()
+        print("\n--- End of Report ---\n")
+
+
+# Execution block
+if __name__ == "__main__":
+    # FIX: Changed _name_ and _main_ to __name__ and __main__
+    advisor = BudgetAdvisor()
+    advisor.run_advisor()
